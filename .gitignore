@@ -487,3 +487,6 @@ __pycache__/
 
 # Local agent tooling
 .atl/
+
+# Internal task notes
+odd/
