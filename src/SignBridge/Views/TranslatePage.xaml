@@ -167,6 +167,14 @@
                         </Button.ImageSource>
                     </Button>
                 </FlexLayout>
+                <Label IsVisible="{Binding ShowKeyboardHints}" Style="{StaticResource Caption}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span FontFamily="Icons" FontSize="16" Text="{x:Static theme:Icons.Keyboard}" />
+                            <Span Text="  Espacio agrega un espacio, Retroceso borra una letra y Supr borra todo." />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
                 <Button Command="{Binding SpeakCommand}" Style="{StaticResource AccentButton}" Text="Decir en voz alta">
                     <Button.ImageSource>
                         <FontImageSource FontFamily="Icons" Glyph="{x:Static theme:Icons.Speak}" Size="22" Color="{StaticResource OnAccent}" />

@@ -43,6 +43,9 @@ public abstract partial class RecognitionViewModel : ObservableObject, IRecognit
 
 	public string OverlayIcon => ShowOverlay ? Icons.HandThumbnail : Icons.HandOverlay;
 
+	/// <summary>Keyboard shortcuts exist only on Windows.</summary>
+	public bool ShowKeyboardHints => DeviceInfo.Platform == DevicePlatform.WinUI;
+
 	/// <summary>Keyboard key that toggles the skeleton overlay (Windows).</summary>
 	public const string OverlayShortcutKey = "E";
 

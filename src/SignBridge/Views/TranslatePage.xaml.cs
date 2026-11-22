@@ -17,4 +17,25 @@ public partial class TranslatePage : CameraPage
 	protected override GraphicsView SkeletonView => Skeleton;
 
 	protected override GraphicsView OverlayView => Overlay;
+
+	private TranslateViewModel Translator => (TranslateViewModel)ViewModel;
+
+	/// <summary>Space adds a space, Backspace deletes a letter, Delete (Supr) clears the text.</summary>
+	protected override bool HandleShortcut(string key)
+	{
+		var command = key switch
+		{
+			"Space" => Translator.SpaceCommand,
+			"Back" => Translator.BackspaceCommand,
+			"Delete" => Translator.ClearCommand,
+			_ => null,
+		};
+		if (command is null)
+		{
+			return base.HandleShortcut(key);
+		}
+
+		command.Execute(null);
+		return true;
+	}
 }

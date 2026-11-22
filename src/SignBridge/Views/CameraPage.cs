@@ -113,41 +113,84 @@ public abstract class CameraPage : ContentPage
 		}
 	}
 
+	/// <summary>
+	/// Handles a keyboard shortcut (Windows). Key names follow Windows.System.VirtualKey:
+	/// "E", "Space", "Back", "Delete". Returns true when the key was used.
+	/// </summary>
+	protected virtual bool HandleShortcut(string key)
+	{
+		if (key == RecognitionViewModel.OverlayShortcutKey)
+		{
+			ViewModel.ToggleOverlayCommand.Execute(null);
+			return true;
+		}
+
+		return false;
+	}
+
 #if WINDOWS
 	private Microsoft.UI.Xaml.UIElement? _keyboardRoot;
-	private Microsoft.UI.Xaml.Input.KeyEventHandler? _keyHandler;
+	private Microsoft.UI.Xaml.Input.KeyEventHandler? _keyDown;
+	private Microsoft.UI.Xaml.Input.KeyEventHandler? _keyUp;
+	private Windows.System.VirtualKey? _consumedKey;
 
-	/// <summary>Windows: the E key toggles the skeleton overlay, like its button.</summary>
 	private void AttachKeyboardShortcuts()
 	{
-		if (Window?.Handler?.PlatformView is not Microsoft.UI.Xaml.Window { Content: { } root })
+		// Shell may raise OnAppearing twice; a second set of handlers would undo every toggle.
+		DetachKeyboardShortcuts();
+
+		// While a Shell page appears it is not attached to its window yet, so use the app's window.
+		var window = Window ?? Application.Current?.Windows.FirstOrDefault();
+		if (window?.Handler?.PlatformView is not Microsoft.UI.Xaml.Window { Content: { } root })
 		{
 			return;
 		}
 
-		_keyHandler = (_, e) =>
+		// Preview (tunneling) events reach the page before the focused control, so a shortcut
+		// such as Space never also "presses" the button that happens to have the focus.
+		_keyDown = (_, e) =>
 		{
-			if (e.Key.ToString() == RecognitionViewModel.OverlayShortcutKey)
+			if (HandleShortcut(e.Key.ToString()))
 			{
-				ViewModel.ToggleOverlayCommand.Execute(null);
+				_consumedKey = e.Key;
 				e.Handled = true;
 			}
 		};
-
-		// handledEventsToo: the shortcut works even when a button has the keyboard focus.
-		root.AddHandler(Microsoft.UI.Xaml.UIElement.KeyDownEvent, _keyHandler, handledEventsToo: true);
+		_keyUp = (_, e) =>
+		{
+			if (_consumedKey == e.Key)
+			{
+				_consumedKey = null;
+				e.Handled = true;
+			}
+		};
+		root.AddHandler(Microsoft.UI.Xaml.UIElement.PreviewKeyDownEvent, _keyDown, handledEventsToo: true);
+		root.AddHandler(Microsoft.UI.Xaml.UIElement.PreviewKeyUpEvent, _keyUp, handledEventsToo: true);
 		_keyboardRoot = root;
+
+		// Windows delivers keys only when some element has the focus; after navigating, none has.
+		root.DispatcherQueue.TryEnqueue(() =>
+		{
+			if (root.XamlRoot is { } xamlRoot && Microsoft.UI.Xaml.Input.FocusManager.GetFocusedElement(xamlRoot) is null)
+			{
+				Microsoft.UI.Xaml.Input.FocusManager.TryMoveFocus(
+					Microsoft.UI.Xaml.Input.FocusNavigationDirection.Next,
+					new Microsoft.UI.Xaml.Input.FindNextElementOptions { SearchRoot = xamlRoot.Content });
+			}
+		});
 	}
 
 	private void DetachKeyboardShortcuts()
 	{
-		if (_keyboardRoot is not null && _keyHandler is not null)
+		if (_keyboardRoot is not null)
 		{
-			_keyboardRoot.RemoveHandler(Microsoft.UI.Xaml.UIElement.KeyDownEvent, _keyHandler);
+			_keyboardRoot.RemoveHandler(Microsoft.UI.Xaml.UIElement.PreviewKeyDownEvent, _keyDown);
+			_keyboardRoot.RemoveHandler(Microsoft.UI.Xaml.UIElement.PreviewKeyUpEvent, _keyUp);
 		}
 
 		_keyboardRoot = null;
-		_keyHandler = null;
+		_keyDown = null;
+		_keyUp = null;
 	}
 #else
 	private void AttachKeyboardShortcuts()
