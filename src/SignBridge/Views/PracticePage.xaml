@@ -3,6 +3,7 @@
     x:Class="SignBridge.Views.PracticePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:theme="clr-namespace:SignBridge.Resources.Theme"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:views="clr-namespace:SignBridge.Views"
     xmlns:vm="clr-namespace:SignBridge.ViewModels"
@@ -10,150 +11,180 @@
     x:DataType="vm:PracticeViewModel">
 
     <views:CameraPage.ToolbarItems>
-        <ToolbarItem Clicked="OnSwitchCameraClicked" Text="Cambiar cámara" />
+        <ToolbarItem Clicked="OnSwitchCameraClicked" Text="Cambiar cámara">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="Icons" Glyph="{x:Static theme:Icons.SwitchCamera}" Color="White" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
     </views:CameraPage.ToolbarItems>
 
-    <Grid Padding="12" RowDefinitions="Auto,*,Auto" RowSpacing="12">
+    <Grid Padding="16" ColumnSpacing="16" RowSpacing="16">
+        <!--  Two columns on wide screens (camera | lesson), stacked on phones  -->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroupList>
+                <VisualStateGroup>
+                    <VisualState x:Name="Wide">
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="900" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Property="ColumnDefinitions" Value="*,380" />
+                            <Setter Property="RowDefinitions" Value="*" />
+                            <Setter TargetName="Lesson" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="Lesson" Property="Grid.Column" Value="1" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Narrow">
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="0" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Property="ColumnDefinitions" Value="*" />
+                            <Setter Property="RowDefinitions" Value="*,Auto" />
+                            <Setter TargetName="Lesson" Property="Grid.Row" Value="1" />
+                            <Setter TargetName="Lesson" Property="Grid.Column" Value="0" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </VisualStateManager.VisualStateGroups>
 
-        <!--  Score bar  -->
-        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
-            <Border Grid.Column="0" Style="{StaticResource StatCard}">
-                <VerticalStackLayout>
-                    <Label Style="{StaticResource StatCaption}" Text="PUNTOS" />
-                    <Label Style="{StaticResource StatValue}" Text="{Binding Score}" />
-                </VerticalStackLayout>
-            </Border>
-            <Border Grid.Column="1" Style="{StaticResource StatCard}">
-                <VerticalStackLayout>
-                    <Label Style="{StaticResource StatCaption}" Text="RACHA 🔥" />
-                    <Label Style="{StaticResource StatValue}" Text="{Binding Streak}" />
-                </VerticalStackLayout>
-            </Border>
-            <Border Grid.Column="2" Style="{StaticResource StatCard}">
-                <VerticalStackLayout>
-                    <Label Style="{StaticResource StatCaption}" Text="MEJOR" />
-                    <Label Style="{StaticResource StatValue}" Text="{Binding BestStreak}" />
-                </VerticalStackLayout>
-            </Border>
-        </Grid>
-
-        <!--  Camera, hand skeleton and live detection  -->
-        <Grid Grid.Row="1">
-            <Border StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="Black">
+        <!--  Camera with skeleton, toggle and live reading  -->
+        <Grid>
+            <Border BackgroundColor="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 24" StrokeThickness="0">
                 <toolkit:CameraView x:Name="CameraPreview" />
             </Border>
             <GraphicsView x:Name="Overlay" InputTransparent="True" IsVisible="{Binding ShowOverlay}" />
             <Button
-                Margin="10"
+                Margin="12"
                 Padding="12,6"
-                BackgroundColor="#99000000"
+                BackgroundColor="{StaticResource Scrim}"
                 Command="{Binding ToggleOverlayCommand}"
                 CornerRadius="16"
                 FontSize="13"
                 HorizontalOptions="Start"
                 Text="{Binding OverlayButtonText}"
                 TextColor="White"
-                VerticalOptions="Start" />
+                VerticalOptions="Start">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="Icons" Glyph="{Binding OverlayIcon}" Size="18" Color="{StaticResource Accent}" />
+                </Button.ImageSource>
+            </Button>
             <Border
-                Margin="10"
-                Padding="4"
-                BackgroundColor="#99000000"
-                HeightRequest="130"
+                Margin="12"
+                Padding="6"
+                HeightRequest="136"
                 HorizontalOptions="End"
                 InputTransparent="True"
                 IsVisible="{Binding ShowThumbnail}"
-                StrokeShape="RoundRectangle 14"
-                StrokeThickness="0"
+                Style="{StaticResource CameraChip}"
                 VerticalOptions="Start"
-                WidthRequest="130">
+                WidthRequest="128">
                 <VerticalStackLayout>
-                    <Label FontSize="11" HorizontalOptions="Center" Text="Lo que ve la IA" TextColor="White" />
-                    <GraphicsView x:Name="Skeleton" HeightRequest="108" WidthRequest="120" />
+                    <Label FontSize="12" HorizontalOptions="Center" Text="Lo que ve la IA" TextColor="White" />
+                    <GraphicsView x:Name="Skeleton" HeightRequest="108" WidthRequest="116" />
                 </VerticalStackLayout>
             </Border>
             <Border
-                Margin="0,0,0,12"
-                Padding="16,8"
-                BackgroundColor="#99000000"
+                Margin="0,0,0,14"
                 HorizontalOptions="Center"
-                StrokeShape="RoundRectangle 18"
-                StrokeThickness="0"
+                Style="{StaticResource CameraChip}"
                 VerticalOptions="End">
                 <HorizontalStackLayout Spacing="10">
-                    <Label FontSize="16" Text="Veo:" TextColor="White" VerticalOptions="Center" />
+                    <Label Text="Veo" TextColor="{StaticResource Secondary}" VerticalOptions="Center" />
                     <Border
                         Padding="3"
                         BackgroundColor="White"
                         IsVisible="{Binding HandVisible}"
                         StrokeShape="RoundRectangle 8"
                         StrokeThickness="0">
-                        <Image Aspect="AspectFit" HeightRequest="44" Source="{Binding DetectedImage}" WidthRequest="44" />
+                        <Image Aspect="AspectFit" HeightRequest="40" Source="{Binding DetectedImage}" WidthRequest="40" />
                     </Border>
-                    <Label FontAttributes="Bold" FontSize="28" Text="{Binding DetectedLabel}" TextColor="White" />
                     <Label
-                        FontSize="16"
+                        FontFamily="AppBold"
+                        FontSize="28"
+                        Text="{Binding DetectedLabel}"
+                        TextColor="White"
+                        VerticalOptions="Center" />
+                    <Label
+                        IsVisible="{Binding HandVisible}"
                         Text="{Binding DetectedConfidence, StringFormat='{0:P0}'}"
-                        TextColor="{StaticResource PrimaryDark}"
+                        TextColor="{StaticResource Accent}"
                         VerticalOptions="Center" />
                 </HorizontalStackLayout>
             </Border>
         </Grid>
 
-        <!--  Target letter card  -->
-        <Border
-            Grid.Row="2"
-            Padding="16"
-            BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray900}}"
-            StrokeShape="RoundRectangle 20"
-            StrokeThickness="0">
+        <!--  Lesson panel  -->
+        <Border x:Name="Lesson" Style="{StaticResource Card}">
             <Border.Triggers>
                 <DataTrigger Binding="{Binding IsCelebrating}" TargetType="Border" Value="True">
-                    <Setter Property="BackgroundColor" Value="#22C55E" />
+                    <Setter Property="Stroke" Value="{StaticResource Success}" />
+                    <Setter Property="StrokeThickness" Value="3" />
                 </DataTrigger>
             </Border.Triggers>
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16" RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
-                <Border
-                    Grid.RowSpan="2"
-                    Padding="6"
-                    BackgroundColor="White"
-                    StrokeShape="RoundRectangle 14"
-                    StrokeThickness="0">
-                    <Image
-                        Aspect="AspectFit"
-                        HeightRequest="120"
-                        Source="{Binding TargetImage}"
-                        WidthRequest="120" />
-                </Border>
-                <VerticalStackLayout Grid.Column="1" Spacing="2">
-                    <HorizontalStackLayout Spacing="10">
-                        <Label FontAttributes="Bold" FontSize="16" Text="Haz la letra" VerticalOptions="Center" />
+            <VerticalStackLayout Spacing="14">
+
+                <!--  Score  -->
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                    <HorizontalStackLayout Spacing="6">
+                        <Label Style="{StaticResource IconGlyph}" Text="{x:Static theme:Icons.Points}" />
+                        <VerticalStackLayout>
+                            <Label Style="{StaticResource StatValue}" Text="{Binding Score}" />
+                            <Label Style="{StaticResource Caption}" Text="Puntos" />
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Grid.Column="1" Spacing="6">
+                        <Label Style="{StaticResource IconGlyph}" Text="{x:Static theme:Icons.Streak}" />
+                        <VerticalStackLayout>
+                            <Label Style="{StaticResource StatValue}" Text="{Binding Streak}" />
+                            <Label Style="{StaticResource Caption}" Text="Racha" />
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Grid.Column="2" Spacing="6">
+                        <Label Style="{StaticResource IconGlyph}" Text="{x:Static theme:Icons.Best}" />
+                        <VerticalStackLayout>
+                            <Label Style="{StaticResource StatValue}" Text="{Binding BestStreak}" />
+                            <Label Style="{StaticResource Caption}" Text="Mejor racha" />
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <BoxView HeightRequest="1" Color="{StaticResource Secondary}" />
+
+                <!--  Target sign  -->
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                    <Border
+                        Padding="8"
+                        BackgroundColor="{StaticResource Base}"
+                        StrokeShape="RoundRectangle 16"
+                        StrokeThickness="0">
+                        <Image Aspect="AspectFit" HeightRequest="128" Source="{Binding TargetImage}" WidthRequest="112" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                        <Label Style="{StaticResource Caption}" Text="Haz la letra" />
                         <Label
-                            FontAttributes="Bold"
-                            FontSize="36"
+                            FontFamily="AppBold"
+                            FontSize="64"
+                            LineHeight="0.9"
                             Text="{Binding Target}"
                             TextColor="{StaticResource Primary}" />
-                    </HorizontalStackLayout>
-                    <Label FontSize="15" Text="{Binding Hint}" />
-                </VerticalStackLayout>
-                <ProgressBar
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Progress="{Binding HoldProgress}"
-                    ProgressColor="{StaticResource Primary}"
-                    VerticalOptions="Center" />
-                <Label
-                    Grid.Row="2"
-                    Grid.ColumnSpan="2"
-                    FontSize="14"
-                    Text="{Binding Status}" />
-                <HorizontalStackLayout
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    HorizontalOptions="End"
-                    Spacing="8">
-                    <Button Command="{Binding SkipCommand}" Text="Saltar" />
-                </HorizontalStackLayout>
-            </Grid>
+                        <Label LineHeight="1.2" Text="{Binding Hint}" TextColor="{StaticResource Muted}" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <ProgressBar Progress="{Binding HoldProgress}" />
+                <Label Text="{Binding Status}" />
+                <Button
+                    Command="{Binding SkipCommand}"
+                    HorizontalOptions="Start"
+                    Style="{StaticResource QuietButton}"
+                    Text="Saltar letra">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="Icons" Glyph="{x:Static theme:Icons.Skip}" Size="20" Color="{StaticResource Primary}" />
+                    </Button.ImageSource>
+                </Button>
+            </VerticalStackLayout>
         </Border>
     </Grid>
 </views:CameraPage>

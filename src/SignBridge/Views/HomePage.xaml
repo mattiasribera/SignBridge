@@ -3,68 +3,126 @@
     x:Class="SignBridge.Views.HomePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:theme="clr-namespace:SignBridge.Resources.Theme"
     Title="SignBridge"
     Shell.NavBarIsVisible="False">
 
     <ScrollView>
-        <VerticalStackLayout Padding="24,40" Spacing="20" MaximumWidthRequest="640">
+        <VerticalStackLayout>
 
-            <Label
-                FontAttributes="Bold"
-                FontSize="40"
-                Text="🤟 SignBridge"
-                TextColor="{StaticResource Primary}" />
-            <Label
-                FontSize="18"
-                Text="Aprende el alfabeto de lengua de señas con tu cámara y convierte tus señas en voz."
-                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}" />
-
-            <Border
-                Padding="20"
+            <!--  Hero band (30% deep blue) with a real hand skeleton in the accent color  -->
+            <Grid
+                Padding="24,40,24,32"
                 BackgroundColor="{StaticResource Primary}"
-                StrokeShape="RoundRectangle 20"
-                StrokeThickness="0">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnPracticeTapped" />
-                </Border.GestureRecognizers>
-                <VerticalStackLayout Spacing="6">
-                    <Label FontAttributes="Bold" FontSize="24" Text="🎯 Practicar" TextColor="White" />
+                ColumnDefinitions="*,Auto"
+                ColumnSpacing="16">
+                <VerticalStackLayout MaximumWidthRequest="520" Spacing="10" VerticalOptions="Center">
                     <Label
-                        FontSize="16"
-                        Text="La app te muestra una letra y cómo formarla. Hazla frente a la cámara y gana puntos en tiempo real."
+                        FontFamily="AppBold"
+                        FontSize="40"
+                        Text="SignBridge"
                         TextColor="White" />
-                </VerticalStackLayout>
-            </Border>
-
-            <Border
-                Padding="20"
-                BackgroundColor="{StaticResource Tertiary}"
-                StrokeShape="RoundRectangle 20"
-                StrokeThickness="0">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnTranslateTapped" />
-                </Border.GestureRecognizers>
-                <VerticalStackLayout Spacing="6">
-                    <Label FontAttributes="Bold" FontSize="24" Text="🔊 Señas a voz" TextColor="White" />
                     <Label
-                        FontSize="16"
-                        Text="Deletrea una palabra letra por letra con tu mano y deja que el dispositivo la diga en voz alta."
-                        TextColor="White" />
+                        FontSize="18"
+                        LineHeight="1.25"
+                        Text="Aprende el alfabeto de señas con tu cámara y convierte tus señas en voz."
+                        TextColor="{StaticResource Secondary}" />
                 </VerticalStackLayout>
-            </Border>
+                <GraphicsView
+                    x:Name="Hero"
+                    Grid.Column="1"
+                    HeightRequest="150"
+                    WidthRequest="120" />
+            </Grid>
 
-            <Label
-                FontSize="13"
-                LineBreakMode="WordWrap"
-                TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}">
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span FontAttributes="Bold" Text="Cómo funciona: " />
-                        <Span Text="Los modelos de mano MediaPipe (OpenCV Zoo, en Hugging Face) encuentran 21 puntos de tu mano y una pequeña red neuronal, entrenada con muchas personas distintas, clasifica la forma de la mano. Todo se ejecuta en el dispositivo con ONNX Runtime: sin internet y sin que ninguna imagen salga del equipo. Alcance del piloto: alfabeto estático de la Lengua de Señas Americana (ASL); el reconocedor es intercambiable para sumar LSB o palabras completas más adelante." />
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
+            <VerticalStackLayout Padding="20,24" MaximumWidthRequest="680" Spacing="14">
 
+                <!--  Practice  -->
+                <Border Style="{StaticResource Card}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPracticeTapped" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16" RowDefinitions="Auto,Auto" RowSpacing="12">
+                        <Border
+                            BackgroundColor="{StaticResource Secondary}"
+                            HeightRequest="52"
+                            StrokeShape="RoundRectangle 16"
+                            StrokeThickness="0"
+                            VerticalOptions="Start"
+                            WidthRequest="52">
+                            <Label
+                                FontSize="28"
+                                HorizontalOptions="Center"
+                                Style="{StaticResource IconGlyph}"
+                                Text="{x:Static theme:Icons.Practice}" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Style="{StaticResource Title}" Text="Practicar" />
+                            <Label
+                                LineHeight="1.2"
+                                Text="La app te muestra una letra y cómo formarla. Hazla frente a la cámara y suma puntos en tiempo real."
+                                TextColor="{StaticResource Muted}" />
+                        </VerticalStackLayout>
+                        <Button
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Clicked="OnPracticeClicked"
+                            HorizontalOptions="Start"
+                            Style="{StaticResource AccentButton}"
+                            Text="Empezar a practicar" />
+                    </Grid>
+                </Border>
+
+                <!--  Sign to voice  -->
+                <Border Style="{StaticResource Card}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTranslateTapped" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16" RowDefinitions="Auto,Auto" RowSpacing="12">
+                        <Border
+                            BackgroundColor="{StaticResource Secondary}"
+                            HeightRequest="52"
+                            StrokeShape="RoundRectangle 16"
+                            StrokeThickness="0"
+                            VerticalOptions="Start"
+                            WidthRequest="52">
+                            <Label
+                                FontSize="28"
+                                HorizontalOptions="Center"
+                                Style="{StaticResource IconGlyph}"
+                                Text="{x:Static theme:Icons.Voice}" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Style="{StaticResource Title}" Text="Señas a voz" />
+                            <Label
+                                LineHeight="1.2"
+                                Text="Deletrea una palabra letra por letra con tu mano y el dispositivo la dice en voz alta."
+                                TextColor="{StaticResource Muted}" />
+                        </VerticalStackLayout>
+                        <Button
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Clicked="OnTranslateClicked"
+                            HorizontalOptions="Start"
+                            Style="{StaticResource QuietButton}"
+                            Text="Abrir traductor" />
+                    </Grid>
+                </Border>
+
+                <!--  How it works  -->
+                <VerticalStackLayout Padding="4,8,4,0" Spacing="6">
+                    <Label FontFamily="AppBold" Text="Cómo funciona" TextColor="{StaticResource Primary}" />
+                    <Label
+                        LineHeight="1.25"
+                        Style="{StaticResource Caption}"
+                        Text="Los modelos de mano MediaPipe (OpenCV Zoo, en Hugging Face) encuentran 21 puntos de tu mano y una red neuronal propia, entrenada con muchas personas distintas, reconoce la forma de la mano. Todo se ejecuta en el dispositivo con ONNX Runtime: sin internet y sin que ninguna imagen salga del equipo." />
+                    <Label
+                        LineHeight="1.25"
+                        Style="{StaticResource Caption}"
+                        Text="Alcance del piloto: alfabeto estático de la Lengua de Señas Americana (ASL). El reconocedor es intercambiable para sumar otras lenguas de señas o palabras completas." />
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

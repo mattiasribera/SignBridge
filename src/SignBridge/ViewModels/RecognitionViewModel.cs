@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SignBridge.Core.Recognition;
+using SignBridge.Resources.Theme;
 using SignBridge.Services;
 
 namespace SignBridge.ViewModels;
@@ -30,12 +31,20 @@ public abstract partial class RecognitionViewModel : ObservableObject, IRecognit
 
 	/// <summary>Draw the skeleton on top of the hand in the preview instead of in the corner thumbnail.</summary>
 	[ObservableProperty]
-	[NotifyPropertyChangedFor(nameof(ShowThumbnail), nameof(OverlayButtonText))]
+	[NotifyPropertyChangedFor(nameof(ShowThumbnail), nameof(OverlayButtonText), nameof(OverlayIcon))]
 	public partial bool ShowOverlay { get; set; } = Preferences.Default.Get(OverlayPreference, false);
 
 	public bool ShowThumbnail => !ShowOverlay;
 
-	public string OverlayButtonText => ShowOverlay ? "✋ Esqueleto en miniatura" : "✋ Esqueleto sobre mi mano";
+	/// <summary>Label of the skeleton toggle; on Windows it also names its keyboard shortcut.</summary>
+	public string OverlayButtonText =>
+		(ShowOverlay ? "Esqueleto en miniatura" : "Esqueleto sobre la mano")
+		+ (DeviceInfo.Platform == DevicePlatform.WinUI ? $" ({OverlayShortcutKey})" : string.Empty);
+
+	public string OverlayIcon => ShowOverlay ? Icons.HandThumbnail : Icons.HandOverlay;
+
+	/// <summary>Keyboard key that toggles the skeleton overlay (Windows).</summary>
+	public const string OverlayShortcutKey = "E";
 
 	[ObservableProperty]
 	public partial string Status { get; set; } = "Iniciando la cámara…";

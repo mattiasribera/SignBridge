@@ -17,8 +17,9 @@ public static class MauiProgram
 			.UseMauiCommunityToolkitCamera()
 			.ConfigureFonts(fonts =>
 			{
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+				fonts.AddFont("AtkinsonHyperlegible-Regular.ttf", "AppRegular");
+				fonts.AddFont("AtkinsonHyperlegible-Bold.ttf", "AppBold");
+				fonts.AddFont("MaterialSymbols.ttf", "Icons");
 			});
 
 		builder.Services.AddSingleton<RecognizerProvider>();

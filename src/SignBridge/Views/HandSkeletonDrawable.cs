@@ -29,7 +29,7 @@ public sealed class HandSkeletonDrawable : IDrawable
 	/// <summary>Flip horizontally, for previews shown mirrored (Android front camera).</summary>
 	public bool Mirror { get; set; }
 
-	public Color BoneColor { get; set; } = Color.FromArgb("#5EEAD4");
+	public Color BoneColor { get; set; } = Color.FromArgb("#FFB81C");
 
 	public void Draw(ICanvas canvas, RectF dirtyRect)
 	{

@@ -5,12 +5,26 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <Color x:Key="Primary">#0D9488</Color>
-    <Color x:Key="PrimaryDark">#5EEAD4</Color>
-    <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#CCFBF1</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Tertiary">#134E4A</Color>
+    <!--
+        60-30-10 palette:
+        60% Base (mist grey) for page backgrounds,
+        30% Primary (deep blue) for the navigation bar, camera frame, buttons and headings,
+        10% Accent (amber) only for what needs attention: the hand skeleton, progress and the main action.
+    -->
+    <Color x:Key="Base">#F2F5F9</Color>
+    <Color x:Key="Surface">#FFFFFF</Color>
+    <Color x:Key="Primary">#123A5E</Color>
+    <Color x:Key="PrimaryDark">#0C2843</Color>
+    <Color x:Key="PrimaryDarkText">#FFFFFF</Color>
+    <Color x:Key="Secondary">#DCE6F0</Color>
+    <Color x:Key="SecondaryDarkText">#9FB3C8</Color>
+    <Color x:Key="Tertiary">#FFB81C</Color>
+    <Color x:Key="Accent">#FFB81C</Color>
+    <Color x:Key="OnAccent">#1F1600</Color>
+    <Color x:Key="Ink">#0E2238</Color>
+    <Color x:Key="Muted">#5B6B7D</Color>
+    <Color x:Key="Success">#1F9D63</Color>
+    <Color x:Key="Scrim">#B30C2843</Color>
 
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>

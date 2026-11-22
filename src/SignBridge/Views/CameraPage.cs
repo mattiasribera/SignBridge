@@ -39,6 +39,7 @@ public abstract class CameraPage : ContentPage
 		base.OnAppearing();
 		SkeletonView.Drawable = _skeleton;
 		OverlayView.Drawable = _overlay;
+		AttachKeyboardShortcuts();
 		ViewModel.PropertyChanged += OnViewModelPropertyChanged;
 
 		try
@@ -73,6 +74,7 @@ public abstract class CameraPage : ContentPage
 	protected override void OnDisappearing()
 	{
 		ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+		DetachKeyboardShortcuts();
 		_loop.Stop();
 		try
 		{
@@ -110,6 +112,52 @@ public abstract class CameraPage : ContentPage
 			OverlayView.Invalidate();
 		}
 	}
+
+#if WINDOWS
+	private Microsoft.UI.Xaml.UIElement? _keyboardRoot;
+	private Microsoft.UI.Xaml.Input.KeyEventHandler? _keyHandler;
+
+	/// <summary>Windows: the E key toggles the skeleton overlay, like its button.</summary>
+	private void AttachKeyboardShortcuts()
+	{
+		if (Window?.Handler?.PlatformView is not Microsoft.UI.Xaml.Window { Content: { } root })
+		{
+			return;
+		}
+
+		_keyHandler = (_, e) =>
+		{
+			if (e.Key.ToString() == RecognitionViewModel.OverlayShortcutKey)
+			{
+				ViewModel.ToggleOverlayCommand.Execute(null);
+				e.Handled = true;
+			}
+		};
+
+		// handledEventsToo: the shortcut works even when a button has the keyboard focus.
+		root.AddHandler(Microsoft.UI.Xaml.UIElement.KeyDownEvent, _keyHandler, handledEventsToo: true);
+		_keyboardRoot = root;
+	}
+
+	private void DetachKeyboardShortcuts()
+	{
+		if (_keyboardRoot is not null && _keyHandler is not null)
+		{
+			_keyboardRoot.RemoveHandler(Microsoft.UI.Xaml.UIElement.KeyDownEvent, _keyHandler);
+		}
+
+		_keyboardRoot = null;
+		_keyHandler = null;
+	}
+#else
+	private void AttachKeyboardShortcuts()
+	{
+	}
+
+	private void DetachKeyboardShortcuts()
+	{
+	}
+#endif
 
 	/// <summary>Android shows the front camera mirrored (like a selfie); the captured frame is not.</summary>
 	private bool PreviewIsMirrored =>
