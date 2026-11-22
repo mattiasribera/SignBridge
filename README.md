@@ -10,6 +10,10 @@ Aplicación .NET 10 MAUI para **Windows** y **Android**. Toda la IA se ejecuta *
 - **Lo que ve la IA**: esqueleto en vivo de los 21 puntos de la mano detectados, en miniatura o dibujado sobre tu mano (botón ✋).
 - Funciona con la mano derecha y con la izquierda.
 
+## Demo
+
+[Video: deletreo de "MATIAS" y lectura en voz alta](docs/SignBridge-demo-MATIAS.mp4) (34 s). Es el motor real de la app (`SignBridge.Core`, mismo modelo y mismos umbrales) procesando fotos del dataset ASL Letters, dibujado con la interfaz de Señas a voz; la voz es la de Windows (español de México).
+
 ## Cómo funciona
 
 ```
