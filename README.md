@@ -84,3 +84,5 @@ Límites conocidos de este piloto:
   - [aliciiavs/sign_language_image_dataset](https://huggingface.co/datasets/aliciiavs/sign_language_image_dataset), [Hemg/sign_language_dataset](https://huggingface.co/datasets/Hemg/sign_language_dataset) y [niki-stha/asl-detection-roboflow](https://huggingface.co/datasets/niki-stha/asl-detection-roboflow): **no declaran licencia**; se usaron solo con fines académicos. Para un uso comercial habría que reentrenar sin ellos (el modelo v1 no los usa).
 - Las fotos de prueba son de `EitanG98/asl_letters`.
 - Dibujos de las señas: serie *Sign language A–Z* de Wikimedia Commons (dominio público).
+- Tipografía [Atkinson Hyperlegible](https://github.com/googlefonts/atkinson-hyperlegible) (Braille Institute, SIL Open Font License 1.1).
+- Íconos [Material Symbols Rounded](https://github.com/google/material-design-icons) (Google, Apache-2.0), reducidos a los íconos usados.
