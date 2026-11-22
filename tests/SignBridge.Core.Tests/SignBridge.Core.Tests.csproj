@@ -25,8 +25,11 @@
 
   <ItemGroup>
     <None Include="Fixtures\*.jpg" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="..\..\src\SignBridge\Resources\Raw\asl_efficientnet_b0.onnx" Link="Fixtures\asl_efficientnet_b0.onnx" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="..\..\src\SignBridge\Resources\Raw\asl_labels.json" Link="Fixtures\asl_labels.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\src\SignBridge\Resources\Raw\palm_detection.onnx" Link="Fixtures\palm_detection.onnx" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\src\SignBridge\Resources\Raw\hand_landmarks.onnx" Link="Fixtures\hand_landmarks.onnx" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\src\SignBridge\Resources\Raw\asl_landmark_mlp.onnx" Link="Fixtures\asl_landmark_mlp.onnx" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\src\SignBridge\Resources\Raw\asl_landmark_labels.json" Link="Fixtures\asl_landmark_labels.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Fixtures\landmark_reference.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

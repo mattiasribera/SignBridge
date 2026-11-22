@@ -65,6 +65,27 @@ public class PracticeSessionTests
     }
 
     [Fact]
+    public void Counts_the_target_when_it_is_likely_even_if_not_the_top_guess()
+    {
+        var session = NewSession(requiredHits: 1);
+        var target = session.Target;
+        var other = Letters.First(l => l != target);
+        var result = new RecognitionResult([new SignPrediction(other, 0.35f), new SignPrediction(target, 0.65f)]);
+        var unlikely = new RecognitionResult([new SignPrediction(other, 0.7f), new SignPrediction(target, 0.3f)]);
+
+        Assert.Equal(PracticeOutcome.NoMatch, session.Submit(unlikely));
+        Assert.Equal(PracticeOutcome.Matched, session.Submit(result));
+    }
+
+    [Fact]
+    public void No_hand_is_not_a_match()
+    {
+        var session = NewSession(requiredHits: 1);
+
+        Assert.Equal(PracticeOutcome.NoMatch, session.Submit(RecognitionResult.NoHand));
+    }
+
+    [Fact]
     public void Skip_resets_the_streak_and_changes_the_target()
     {
         var session = NewSession(requiredHits: 1);

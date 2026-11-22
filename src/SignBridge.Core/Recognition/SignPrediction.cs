@@ -4,24 +4,24 @@ namespace SignBridge.Core.Recognition;
 public sealed record SignPrediction(string Label, float Confidence);
 
 /// <summary>All candidates for one frame, ordered from most to least likely.</summary>
-public sealed record RecognitionResult(IReadOnlyList<SignPrediction> Ranked)
+/// <param name="Ranked">Candidates, most likely first. Empty when no hand was found.</param>
+/// <param name="Landmarks">21 hand points as x,y,z triplets in image pixels, when the recognizer provides them.</param>
+public sealed record RecognitionResult(IReadOnlyList<SignPrediction> Ranked, float[]? Landmarks = null)
 {
-    public SignPrediction Top => Ranked[0];
-}
+    private static readonly SignPrediction Nothing = new(string.Empty, 0f);
 
-/// <summary>How a camera frame is turned into model input.</summary>
-/// <param name="CropFraction">Side of the centered square crop, relative to the shorter image side.</param>
-/// <param name="Mirror">Flip horizontally (front cameras deliver mirrored selfies on some platforms).</param>
-public sealed record FrameOptions(float CropFraction = 1f, bool Mirror = false)
-{
-    public static FrameOptions Default { get; } = new();
+    public static RecognitionResult NoHand { get; } = new([]);
+
+    public bool HandFound => Ranked.Count > 0;
+
+    public SignPrediction Top => Ranked.Count > 0 ? Ranked[0] : Nothing;
 }
 
 /// <summary>
-/// Port for any sign recognizer. The app depends only on this, so the current
-/// ASL alphabet classifier can be swapped for a landmark- or LSB-based model.
+/// Port for any sign recognizer. The app depends only on this, so the current ASL
+/// alphabet recognizer can be swapped for an LSB or whole-word model without touching the UI.
 /// </summary>
 public interface ISignRecognizer : IDisposable
 {
-    RecognitionResult Recognize(Stream encodedImage, FrameOptions options);
+    RecognitionResult Recognize(Stream encodedImage);
 }

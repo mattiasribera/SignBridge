@@ -55,9 +55,16 @@ public sealed class PracticeSession
     /// <summary>How long the target has been held, relative to what is required (0..1).</summary>
     public float HoldProgress => (float)_hits / _requiredHits;
 
-    public PracticeOutcome Submit(SignPrediction prediction)
+    public PracticeOutcome Submit(SignPrediction prediction) => Submit(new RecognitionResult([prediction]));
+
+    /// <summary>
+    /// Judges a frame by the probability the recognizer gives to the target letter, so a sign
+    /// the model finds likely counts even when another letter is marginally ahead.
+    /// </summary>
+    public PracticeOutcome Submit(RecognitionResult result)
     {
-        if (prediction.Label != Target || prediction.Confidence < _threshold)
+        var targetProbability = result.Ranked.FirstOrDefault(p => p.Label == Target)?.Confidence ?? 0f;
+        if (targetProbability < _threshold)
         {
             _hits = 0;
             return PracticeOutcome.NoMatch;
