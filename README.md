@@ -34,6 +34,10 @@ Arquitectura (hexagonal, puertos y adaptadores):
 
 Requisitos: SDK de .NET 10 y Visual Studio 2026 (Insiders) con la carga de trabajo **.NET MAUI**.
 
+```bash
+git clone https://github.com/mattiasribera/SignBridge.git
+```
+
 **Windows**
 1. Abre `SignBridge.slnx`.
 2. Elige `SignBridge` como proyecto de inicio, selecciona **Windows Machine** y presiona **F5**.
