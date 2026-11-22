@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SignBridge.Core/SignBridge.Core.csproj" />
+    <Project Path="src/SignBridge/SignBridge.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SignBridge.Core.Tests/SignBridge.Core.Tests.csproj" />
+  </Folder>
+</Solution>

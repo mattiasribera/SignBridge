@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:CameraPage
+    x:Class="SignBridge.Views.TranslatePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:views="clr-namespace:SignBridge.Views"
+    xmlns:vm="clr-namespace:SignBridge.ViewModels"
+    Title="Sign to voice"
+    x:DataType="vm:TranslateViewModel">
+
+    <views:CameraPage.ToolbarItems>
+        <ToolbarItem Clicked="OnSwitchCameraClicked" Text="Switch camera" />
+    </views:CameraPage.ToolbarItems>
+
+    <Grid Padding="12" RowDefinitions="*,Auto" RowSpacing="12">
+
+        <!--  Camera with guide frame and the letter being held  -->
+        <Grid x:Name="CameraHost">
+            <Border StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="Black">
+                <toolkit:CameraView x:Name="CameraPreview" />
+            </Border>
+            <Border
+                x:Name="Guide"
+                HorizontalOptions="Center"
+                InputTransparent="True"
+                Stroke="White"
+                StrokeDashArray="6,4"
+                StrokeShape="RoundRectangle 16"
+                StrokeThickness="3"
+                VerticalOptions="Center" />
+            <Border
+                Margin="0,0,0,12"
+                Padding="16,8"
+                BackgroundColor="#99000000"
+                HorizontalOptions="Center"
+                StrokeShape="RoundRectangle 18"
+                StrokeThickness="0"
+                VerticalOptions="End"
+                WidthRequest="220">
+                <VerticalStackLayout Spacing="4">
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+                        <Label FontAttributes="Bold" FontSize="28" Text="{Binding DetectedLabel}" TextColor="White" />
+                        <Label
+                            FontSize="16"
+                            Text="{Binding DetectedConfidence, StringFormat='{0:P0}'}"
+                            TextColor="{StaticResource PrimaryDark}"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <ProgressBar Progress="{Binding CandidateProgress}" ProgressColor="{StaticResource PrimaryDark}" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!--  Built text and actions  -->
+        <Border
+            Grid.Row="1"
+            Padding="16"
+            BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray900}}"
+            StrokeShape="RoundRectangle 20"
+            StrokeThickness="0">
+            <VerticalStackLayout Spacing="10">
+                <Label FontSize="14" Text="{Binding Status}" />
+                <Border
+                    Padding="12"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource OffBlack}}"
+                    StrokeShape="RoundRectangle 12"
+                    StrokeThickness="0">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="32"
+                        LineBreakMode="CharacterWrap"
+                        MinimumHeightRequest="44"
+                        Text="{Binding Text}" />
+                </Border>
+                <FlexLayout
+                    AlignItems="Center"
+                    JustifyContent="SpaceBetween"
+                    Wrap="Wrap">
+                    <HorizontalStackLayout Spacing="8">
+                        <Button Command="{Binding SpaceCommand}" Text="Space" />
+                        <Button Command="{Binding BackspaceCommand}" Text="⌫" />
+                        <Button Command="{Binding ClearCommand}" Text="Clear" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="Mirror" VerticalOptions="Center" />
+                        <Switch IsToggled="{Binding Mirror}" />
+                        <Button
+                            BackgroundColor="{StaticResource Tertiary}"
+                            Command="{Binding SpeakCommand}"
+                            Text="🔊 Speak" />
+                    </HorizontalStackLayout>
+                </FlexLayout>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</views:CameraPage>

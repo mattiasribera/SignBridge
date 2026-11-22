@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SignBridge.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="SignBridge"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,40" Spacing="20" MaximumWidthRequest="640">
+
+            <Label
+                FontAttributes="Bold"
+                FontSize="40"
+                Text="🤟 SignBridge"
+                TextColor="{StaticResource Primary}" />
+            <Label
+                FontSize="18"
+                Text="Learn the sign language alphabet with your camera, and turn your signs into voice."
+                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}" />
+
+            <Border
+                Padding="20"
+                BackgroundColor="{StaticResource Primary}"
+                StrokeShape="RoundRectangle 20"
+                StrokeThickness="0">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnPracticeTapped" />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="6">
+                    <Label FontAttributes="Bold" FontSize="24" Text="🎯 Practice" TextColor="White" />
+                    <Label
+                        FontSize="16"
+                        Text="The app shows a letter and how to form it. Sign it in front of the camera and earn points in real time."
+                        TextColor="White" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border
+                Padding="20"
+                BackgroundColor="{StaticResource Tertiary}"
+                StrokeShape="RoundRectangle 20"
+                StrokeThickness="0">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnTranslateTapped" />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="6">
+                    <Label FontAttributes="Bold" FontSize="24" Text="🔊 Sign to voice" TextColor="White" />
+                    <Label
+                        FontSize="16"
+                        Text="Spell a word letter by letter with your hand and let the phone say it out loud."
+                        TextColor="White" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label
+                FontSize="13"
+                LineBreakMode="WordWrap"
+                TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span FontAttributes="Bold" Text="How it works: " />
+                        <Span Text="an EfficientNet-B0 model from Hugging Face (abdollahhh/asl-sign-language-efficientnet-b0) runs on the device with ONNX Runtime. No internet needed, no image leaves the phone. Pilot scope: American Sign Language (ASL) static alphabet; the recognizer is pluggable to support LSB or full words later." />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
