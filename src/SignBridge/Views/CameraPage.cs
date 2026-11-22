@@ -15,6 +15,7 @@ public abstract class CameraPage : ContentPage
 	private readonly RecognizerProvider _recognizers;
 	private readonly RecognitionLoop _loop = new();
 	private readonly HandSkeletonDrawable _skeleton = new();
+	private readonly HandSkeletonDrawable _overlay = new() { IsOverlay = true };
 	private IReadOnlyList<CameraInfo> _cameras = [];
 
 	protected CameraPage(RecognizerProvider recognizers, RecognitionViewModel viewModel)
@@ -30,20 +31,24 @@ public abstract class CameraPage : ContentPage
 
 	protected abstract GraphicsView SkeletonView { get; }
 
+	/// <summary>Transparent view stacked exactly on top of the camera preview.</summary>
+	protected abstract GraphicsView OverlayView { get; }
+
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
 		SkeletonView.Drawable = _skeleton;
+		OverlayView.Drawable = _overlay;
 		ViewModel.PropertyChanged += OnViewModelPropertyChanged;
 
 		try
 		{
-			ViewModel.Status = "Loading models…";
+			ViewModel.Status = "Cargando los modelos…";
 			var recognizer = await _recognizers.GetAsync();
 
 			if (await Permissions.RequestAsync<Permissions.Camera>() != PermissionStatus.Granted)
 			{
-				ViewModel.Status = "Camera permission is required.";
+				ViewModel.Status = "Se necesita permiso para usar la cámara.";
 				return;
 			}
 
@@ -51,17 +56,17 @@ public abstract class CameraPage : ContentPage
 			var preferred = _cameras.FirstOrDefault(c => c.Position == CameraPosition.Front) ?? _cameras.FirstOrDefault();
 			if (preferred is null)
 			{
-				ViewModel.Status = "No camera found.";
+				ViewModel.Status = "No se encontró ninguna cámara.";
 				return;
 			}
 
 			await SelectCameraAsync(preferred);
-			ViewModel.Status = "Show your hand to the camera";
+			ViewModel.Status = "Muestra tu mano a la cámara";
 			_loop.Start(Camera, recognizer, ViewModel);
 		}
 		catch (Exception ex)
 		{
-			ViewModel.Status = $"Could not start: {ex.Message}";
+			ViewModel.Status = $"No se pudo iniciar: {ex.Message}";
 		}
 	}
 
@@ -85,7 +90,7 @@ public abstract class CameraPage : ContentPage
 	{
 		if (_cameras.Count < 2)
 		{
-			ViewModel.Status = "Only one camera available.";
+			ViewModel.Status = "Solo hay una cámara disponible.";
 			return;
 		}
 
@@ -95,12 +100,20 @@ public abstract class CameraPage : ContentPage
 
 	private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (e.PropertyName == nameof(RecognitionViewModel.Landmarks))
+		if (e.PropertyName is nameof(RecognitionViewModel.Landmarks) or nameof(RecognitionViewModel.ShowOverlay))
 		{
 			_skeleton.Landmarks = ViewModel.Landmarks;
+			_overlay.Landmarks = ViewModel.ShowOverlay ? ViewModel.Landmarks : null;
+			_overlay.FrameSize = ViewModel.FrameSize;
+			_overlay.Mirror = PreviewIsMirrored;
 			SkeletonView.Invalidate();
+			OverlayView.Invalidate();
 		}
 	}
+
+	/// <summary>Android shows the front camera mirrored (like a selfie); the captured frame is not.</summary>
+	private bool PreviewIsMirrored =>
+		DeviceInfo.Platform == DevicePlatform.Android && Camera.SelectedCamera?.Position == CameraPosition.Front;
 
 	private async Task SelectCameraAsync(CameraInfo camera)
 	{

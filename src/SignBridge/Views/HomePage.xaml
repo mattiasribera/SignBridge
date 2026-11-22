@@ -16,7 +16,7 @@
                 TextColor="{StaticResource Primary}" />
             <Label
                 FontSize="18"
-                Text="Learn the sign language alphabet with your camera, and turn your signs into voice."
+                Text="Aprende el alfabeto de lengua de señas con tu cámara y convierte tus señas en voz."
                 TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}" />
 
             <Border
@@ -28,10 +28,10 @@
                     <TapGestureRecognizer Tapped="OnPracticeTapped" />
                 </Border.GestureRecognizers>
                 <VerticalStackLayout Spacing="6">
-                    <Label FontAttributes="Bold" FontSize="24" Text="🎯 Practice" TextColor="White" />
+                    <Label FontAttributes="Bold" FontSize="24" Text="🎯 Practicar" TextColor="White" />
                     <Label
                         FontSize="16"
-                        Text="The app shows a letter and how to form it. Sign it in front of the camera and earn points in real time."
+                        Text="La app te muestra una letra y cómo formarla. Hazla frente a la cámara y gana puntos en tiempo real."
                         TextColor="White" />
                 </VerticalStackLayout>
             </Border>
@@ -45,10 +45,10 @@
                     <TapGestureRecognizer Tapped="OnTranslateTapped" />
                 </Border.GestureRecognizers>
                 <VerticalStackLayout Spacing="6">
-                    <Label FontAttributes="Bold" FontSize="24" Text="🔊 Sign to voice" TextColor="White" />
+                    <Label FontAttributes="Bold" FontSize="24" Text="🔊 Señas a voz" TextColor="White" />
                     <Label
                         FontSize="16"
-                        Text="Spell a word letter by letter with your hand and let the phone say it out loud."
+                        Text="Deletrea una palabra letra por letra con tu mano y deja que el dispositivo la diga en voz alta."
                         TextColor="White" />
                 </VerticalStackLayout>
             </Border>
@@ -59,8 +59,8 @@
                 TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}">
                 <Label.FormattedText>
                     <FormattedString>
-                        <Span FontAttributes="Bold" Text="How it works: " />
-                        <Span Text="MediaPipe hand models (OpenCV Zoo, via Hugging Face) find 21 points of your hand, and a small neural network trained on many different people classifies the hand shape. Everything runs on the device with ONNX Runtime: no internet, no image leaves the phone. Pilot scope: American Sign Language (ASL) static alphabet; the recognizer is pluggable to support LSB or full words later." />
+                        <Span FontAttributes="Bold" Text="Cómo funciona: " />
+                        <Span Text="Los modelos de mano MediaPipe (OpenCV Zoo, en Hugging Face) encuentran 21 puntos de tu mano y una pequeña red neuronal, entrenada con muchas personas distintas, clasifica la forma de la mano. Todo se ejecuta en el dispositivo con ONNX Runtime: sin internet y sin que ninguna imagen salga del equipo. Alcance del piloto: alfabeto estático de la Lengua de Señas Americana (ASL); el reconocedor es intercambiable para sumar LSB o palabras completas más adelante." />
                     </FormattedString>
                 </Label.FormattedText>
             </Label>

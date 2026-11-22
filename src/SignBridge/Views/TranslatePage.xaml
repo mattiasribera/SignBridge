@@ -6,11 +6,11 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:views="clr-namespace:SignBridge.Views"
     xmlns:vm="clr-namespace:SignBridge.ViewModels"
-    Title="Sign to voice"
+    Title="Señas a voz"
     x:DataType="vm:TranslateViewModel">
 
     <views:CameraPage.ToolbarItems>
-        <ToolbarItem Clicked="OnSwitchCameraClicked" Text="Switch camera" />
+        <ToolbarItem Clicked="OnSwitchCameraClicked" Text="Cambiar cámara" />
     </views:CameraPage.ToolbarItems>
 
     <Grid Padding="12" RowDefinitions="*,Auto" RowSpacing="12">
@@ -20,6 +20,18 @@
             <Border StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="Black">
                 <toolkit:CameraView x:Name="CameraPreview" />
             </Border>
+            <GraphicsView x:Name="Overlay" InputTransparent="True" IsVisible="{Binding ShowOverlay}" />
+            <Button
+                Margin="10"
+                Padding="12,6"
+                BackgroundColor="#99000000"
+                Command="{Binding ToggleOverlayCommand}"
+                CornerRadius="16"
+                FontSize="13"
+                HorizontalOptions="Start"
+                Text="{Binding OverlayButtonText}"
+                TextColor="White"
+                VerticalOptions="Start" />
             <Border
                 Margin="10"
                 Padding="4"
@@ -27,12 +39,13 @@
                 HeightRequest="130"
                 HorizontalOptions="End"
                 InputTransparent="True"
+                IsVisible="{Binding ShowThumbnail}"
                 StrokeShape="RoundRectangle 14"
                 StrokeThickness="0"
                 VerticalOptions="Start"
                 WidthRequest="130">
                 <VerticalStackLayout>
-                    <Label FontSize="11" HorizontalOptions="Center" Text="What the AI sees" TextColor="White" />
+                    <Label FontSize="11" HorizontalOptions="Center" Text="Lo que ve la IA" TextColor="White" />
                     <GraphicsView x:Name="Skeleton" HeightRequest="108" WidthRequest="120" />
                 </VerticalStackLayout>
             </Border>
@@ -46,7 +59,7 @@
                 VerticalOptions="End"
                 WidthRequest="260">
                 <VerticalStackLayout Spacing="4">
-                    <Label FontSize="14" HorizontalOptions="Center" Text="Understood sign" TextColor="White" />
+                    <Label FontSize="14" HorizontalOptions="Center" Text="Seña entendida" TextColor="White" />
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
                         <Border
                             Padding="4"
@@ -94,15 +107,15 @@
                     JustifyContent="SpaceBetween"
                     Wrap="Wrap">
                     <HorizontalStackLayout Spacing="8">
-                        <Button Command="{Binding SpaceCommand}" Text="Space" />
+                        <Button Command="{Binding SpaceCommand}" Text="Espacio" />
                         <Button Command="{Binding BackspaceCommand}" Text="⌫" />
-                        <Button Command="{Binding ClearCommand}" Text="Clear" />
+                        <Button Command="{Binding ClearCommand}" Text="Borrar todo" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Spacing="8">
                         <Button
                             BackgroundColor="{StaticResource Tertiary}"
                             Command="{Binding SpeakCommand}"
-                            Text="🔊 Speak" />
+                            Text="🔊 Hablar" />
                     </HorizontalStackLayout>
                 </FlexLayout>
             </VerticalStackLayout>

@@ -26,15 +26,15 @@ public partial class TranslateViewModel(SpeechService speech) : RecognitionViewM
 		if (_builder.Push(top))
 		{
 			Vibrate();
-			Status = $"Added \"{top.Label}\". Lower your hand to repeat a letter.";
+			Status = $"Agregué la \"{top.Label}\". Baja la mano para repetir una letra.";
 		}
 		else if (!result.HandFound)
 		{
-			Status = "Show your hand to the camera";
+			Status = "Muestra tu mano a la cámara";
 		}
 		else if (_builder.Candidate is null)
 		{
-			Status = "Hold the letter steady";
+			Status = "Mantén la letra quieta";
 		}
 
 		Sync();
@@ -70,7 +70,7 @@ public partial class TranslateViewModel(SpeechService speech) : RecognitionViewM
 		}
 		catch (Exception ex)
 		{
-			Status = $"Text-to-speech failed: {ex.Message}";
+			Status = $"No se pudo leer en voz alta: {ex.Message}";
 		}
 	}
 

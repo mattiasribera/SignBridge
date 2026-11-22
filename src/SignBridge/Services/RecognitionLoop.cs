@@ -59,7 +59,7 @@ public sealed class RecognitionLoop
 			}
 			catch (Exception ex)
 			{
-				consumer.OnStatus($"Camera frame skipped: {ex.Message}");
+				consumer.OnStatus($"Se saltó un cuadro de la cámara: {ex.Message}");
 				if (!await DelayAsync(TimeSpan.FromSeconds(1), token))
 				{
 					return;

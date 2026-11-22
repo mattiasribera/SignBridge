@@ -43,10 +43,10 @@ public partial class PracticeViewModel : RecognitionViewModel
 
 		Status = outcome switch
 		{
-			PracticeOutcome.Matched => $"Correct! +{_session.Score - previousScore} points",
-			PracticeOutcome.InProgress => "Good, hold it…",
-			_ when !result.HandFound => "Show your hand to the camera",
-			_ => $"Not yet — compare your hand with the picture of {_session.Target}",
+			PracticeOutcome.Matched => $"¡Correcto! +{_session.Score - previousScore} puntos",
+			PracticeOutcome.InProgress => "¡Bien, mantenla!…",
+			_ when !result.HandFound => "Muestra tu mano a la cámara",
+			_ => $"Todavía no: compara tu mano con el dibujo de la {_session.Target}",
 		};
 
 		if (outcome == PracticeOutcome.Matched)
@@ -62,7 +62,7 @@ public partial class PracticeViewModel : RecognitionViewModel
 	private void Skip()
 	{
 		_session.Skip();
-		Status = $"Skipped. Show the letter {_session.Target}";
+		Status = $"Saltada. Ahora haz la letra {_session.Target}";
 		SyncFromSession();
 	}
 

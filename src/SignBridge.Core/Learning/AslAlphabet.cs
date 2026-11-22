@@ -1,36 +1,36 @@
 namespace SignBridge.Core.Learning;
 
-/// <summary>ASL fingerspelling alphabet with short descriptions of each handshape.</summary>
+/// <summary>ASL fingerspelling alphabet with a short Spanish description of each handshape (shown in the UI).</summary>
 public static class AslAlphabet
 {
     private static readonly Dictionary<string, string> Hints = new()
     {
-        ["A"] = "Make a fist with the thumb resting against the side of the index finger.",
-        ["B"] = "Flat hand, fingers together pointing up, thumb folded across the palm.",
-        ["C"] = "Curve the fingers and thumb into the shape of a C.",
-        ["D"] = "Index finger up; the other fingers curve to touch the thumb.",
-        ["E"] = "Bend all fingertips down over the thumb, which is tucked across the palm.",
-        ["F"] = "Touch the index tip to the thumb; the other three fingers stay up and apart.",
-        ["G"] = "Index finger and thumb point sideways, parallel, like a small gap.",
-        ["H"] = "Index and middle fingers together, pointing sideways.",
-        ["I"] = "Little finger up, the other fingers in a fist.",
-        ["J"] = "Little finger up, then draw a J in the air.",
-        ["K"] = "Index and middle fingers up in a V, thumb touching the middle finger.",
-        ["L"] = "Index finger up and thumb out, forming an L.",
-        ["M"] = "Tuck the thumb under the first three fingers.",
-        ["N"] = "Tuck the thumb under the first two fingers.",
-        ["O"] = "Curve all fingers to meet the thumb, forming an O.",
-        ["P"] = "Like K, but with the hand pointing down.",
-        ["Q"] = "Like G, but with the hand pointing down.",
-        ["R"] = "Cross the middle finger over the index finger.",
-        ["S"] = "Make a fist with the thumb across the front of the fingers.",
-        ["T"] = "Tuck the thumb between the index and middle fingers.",
-        ["U"] = "Index and middle fingers up, together.",
-        ["V"] = "Index and middle fingers up, spread apart in a V.",
-        ["W"] = "Index, middle and ring fingers up and spread.",
-        ["X"] = "Index finger bent like a hook, other fingers in a fist.",
-        ["Y"] = "Thumb and little finger out, the other fingers folded.",
-        ["Z"] = "Point with the index finger and draw a Z in the air.",
+        ["A"] = "Puño cerrado con el pulgar apoyado al costado del índice.",
+        ["B"] = "Mano plana, dedos juntos hacia arriba y el pulgar doblado sobre la palma.",
+        ["C"] = "Curva los dedos y el pulgar formando una C.",
+        ["D"] = "Índice hacia arriba; los demás dedos se curvan hasta tocar el pulgar.",
+        ["E"] = "Dobla las puntas de los dedos sobre el pulgar, que queda cruzado sobre la palma.",
+        ["F"] = "La punta del índice toca el pulgar; los otros tres dedos quedan arriba y separados.",
+        ["G"] = "Índice y pulgar apuntan hacia el costado, paralelos, dejando un pequeño espacio.",
+        ["H"] = "Índice y medio juntos, apuntando hacia el costado.",
+        ["I"] = "Meñique hacia arriba y los demás dedos en puño.",
+        ["J"] = "Meñique hacia arriba y dibuja una J en el aire.",
+        ["K"] = "Índice y medio arriba en V, con el pulgar tocando el dedo medio.",
+        ["L"] = "Índice hacia arriba y pulgar hacia afuera, formando una L.",
+        ["M"] = "Esconde el pulgar debajo de los tres primeros dedos.",
+        ["N"] = "Esconde el pulgar debajo de los dos primeros dedos.",
+        ["O"] = "Curva todos los dedos hasta juntarlos con el pulgar, formando una O.",
+        ["P"] = "Como la K, pero con la mano apuntando hacia abajo.",
+        ["Q"] = "Como la G, pero con la mano apuntando hacia abajo.",
+        ["R"] = "Cruza el dedo medio sobre el índice.",
+        ["S"] = "Puño cerrado con el pulgar cruzado por delante de los dedos.",
+        ["T"] = "Mete el pulgar entre el índice y el medio.",
+        ["U"] = "Índice y medio hacia arriba, juntos.",
+        ["V"] = "Índice y medio hacia arriba, separados en V.",
+        ["W"] = "Índice, medio y anular hacia arriba y separados.",
+        ["X"] = "Índice doblado como un gancho y los demás dedos en puño.",
+        ["Y"] = "Pulgar y meñique hacia afuera, los demás dedos doblados.",
+        ["Z"] = "Apunta con el índice y dibuja una Z en el aire.",
     };
 
     public static IReadOnlyList<string> Letters { get; } = Hints.Keys.Order().ToArray();

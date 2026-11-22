@@ -1,49 +1,50 @@
 # SignBridge
 
-Learn the American Sign Language (ASL) alphabet with your camera, and turn fingerspelled words into voice.
-.NET 10 MAUI app for **Windows** and **Android**. All AI runs **on the device** with ONNX Runtime — no internet, no images leave the device.
+Aprende el alfabeto de la Lengua de Señas Americana (ASL) con tu cámara y convierte palabras deletreadas en voz.
+Aplicación .NET 10 MAUI para **Windows** y **Android**. Toda la IA se ejecuta **en el dispositivo** con ONNX Runtime: sin internet y sin que ninguna imagen salga del equipo.
 
-## Features
+## Funciones
 
-- **Practice** — the app shows a letter, a drawing of the sign and how to form it. Sign it in front of the camera; it scores you in real time (score, streak, best streak).
-- **Sign to voice** — spell a word letter by letter; the app shows the sign it understood (with its reference drawing) and reads the word aloud with the device's offline text-to-speech (Spanish voice when available).
-- **What the AI sees** — a live skeleton of the 21 hand points the model detected.
+- **Practicar**: la app muestra una letra, el dibujo de la seña y cómo formarla. La haces frente a la cámara y te califica en tiempo real (puntos, racha y mejor racha). Recorre todas las letras, en orden aleatorio, antes de repetir alguna.
+- **Señas a voz**: deletreas una palabra letra por letra; la app muestra la seña que entendió (con su dibujo de referencia) y lee la palabra en voz alta con la voz sin conexión del dispositivo (en español cuando está disponible).
+- **Lo que ve la IA**: esqueleto en vivo de los 21 puntos de la mano detectados, en miniatura o dibujado sobre tu mano (botón ✋).
+- Funciona con la mano derecha y con la izquierda.
 
-## How it works
+## Cómo funciona
 
 ```
-camera frame ──► palm detector ──► hand landmark model ──► 63 features ──► MLP classifier ──► letter + probability
-                 (MediaPipe,        (MediaPipe, 21 points)  (wrist-relative,    (26 letters)
-                  ONNX)                                       scale-invariant)
+cuadro de cámara ──► detector de palma ──► modelo de puntos de la mano ──► 63 rasgos ──► clasificador MLP ──► letra + probabilidad
+                     (MediaPipe, ONNX)      (MediaPipe, 21 puntos)          (relativos a la     (26 letras)
+                                                                              muñeca, sin escala)
 ```
 
-The classifier only sees the **shape of the hand**, never the background, clothing or skin color.
-That is the key design decision — see *Model evaluation* below.
+El clasificador solo ve la **forma de la mano**, nunca el fondo, la ropa ni el color de piel.
+Esa es la decisión de diseño clave; ver *Evaluación de modelos* más abajo.
 
-Architecture (hexagonal / ports and adapters):
+Arquitectura (hexagonal, puertos y adaptadores):
 
-| Project | Role |
+| Proyecto | Rol |
 |---|---|
-| `src/SignBridge.Core` | Domain and recognition, no UI: `ISignRecognizer` (port), `LandmarkSignRecognizer` (adapter), `PracticeSession`, `WordBuilder`, `AslAlphabet`. |
-| `src/SignBridge` | MAUI app: pages, view models (MVVM Toolkit), camera loop, text-to-speech. Depends on the port only; `RecognizerProvider` is the single place that picks the adapter. |
-| `tests/SignBridge.Core.Tests` | xUnit tests, including parity tests of the C# pipeline against the Python reference outputs. |
-| `tools/landmark_reference.py` | Regenerates the Python reference outputs used by the parity tests. |
+| `src/SignBridge.Core` | Dominio y reconocimiento, sin interfaz: `ISignRecognizer` (puerto), `LandmarkSignRecognizer` (adaptador), `PracticeSession`, `WordBuilder`, `AslAlphabet`. |
+| `src/SignBridge` | App MAUI: páginas, view models (MVVM Toolkit), ciclo de cámara, texto a voz. Depende solo del puerto; `RecognizerProvider` es el único lugar que elige el adaptador. |
+| `tests/SignBridge.Core.Tests` | Pruebas xUnit, incluidas pruebas de paridad del pipeline en C# contra las salidas de referencia en Python. |
+| `tools/landmark_reference.py` | Regenera las salidas de referencia de Python que usan las pruebas de paridad. |
 
-## Run it
+## Cómo ejecutarla
 
-Requirements: .NET 10 SDK, Visual Studio 2026 (Insiders) with the **.NET MAUI** workload.
+Requisitos: SDK de .NET 10 y Visual Studio 2026 (Insiders) con la carga de trabajo **.NET MAUI**.
 
 **Windows**
-1. Open `SignBridge.slnx`.
-2. Set `SignBridge` as the startup project, pick **Windows Machine**, press **F5**.
-3. Allow camera access if Windows asks (Settings › Privacy › Camera › *Let desktop apps access your camera*).
+1. Abre `SignBridge.slnx`.
+2. Elige `SignBridge` como proyecto de inicio, selecciona **Windows Machine** y presiona **F5**.
+3. Permite el acceso a la cámara si Windows lo pide (Configuración › Privacidad › Cámara › *Permitir que las aplicaciones de escritorio accedan a la cámara*).
 
-**Android (USB debugging, no APK signing needed)**
-1. On the phone: enable *Developer options* and *USB debugging*, connect it by USB and accept the prompt.
-2. In Visual Studio pick the phone under **Android Local Devices**, press **F5**.
-3. Requires Android 7.0 (API 24) or newer.
+**Android (depuración USB, sin firmar APK)**
+1. En el teléfono: activa las *Opciones de desarrollador* y la *Depuración USB*, conéctalo por USB y acepta el aviso.
+2. En Visual Studio elige el teléfono en **Android Local Devices** y presiona **F5**.
+3. Requiere Android 7.0 (API 24) o superior.
 
-Command line:
+Línea de comandos:
 
 ```bash
 dotnet test tests/SignBridge.Core.Tests
@@ -51,26 +52,35 @@ dotnet build src/SignBridge -f net10.0-windows10.0.19041.0
 dotnet build src/SignBridge -f net10.0-android
 ```
 
-## Model evaluation (why landmarks)
+## Evaluación de modelos (por qué puntos de la mano)
 
-All candidates were tested **cross-dataset**: on people and backgrounds the model never saw during training.
+Todos los candidatos se probaron **entre datasets distintos**: con personas y fondos que el modelo nunca vio al entrenar.
 
-| Approach | Unseen signers (ASL-HG P9–P10) | Real-room photos (ASL Letters) | Size |
+| Enfoque | Personas nuevas (ASL-HG P9–P10) | Fotos en ambientes reales (ASL Letters) | Tamaño |
 |---|---|---|---|
-| EfficientNet-B0 image classifier (first attempt) | 16.8% | 38–48% | 16 MB |
-| SigLIP2 / ViT image classifiers | 44–48% | 45–52% | 330+ MB |
-| **Hand landmarks + MLP (shipped)** | **88.7%** | **63–73%** | ~8 MB |
+| Clasificador de imagen EfficientNet-B0 (primer intento) | 16,8 % | 38–48 % | 16 MB |
+| Clasificadores de imagen SigLIP2 / ViT | 44–48 % | 45–52 % | 330+ MB |
+| Puntos de la mano + MLP v1 | 87,1 % | 71,0 % | ~8 MB |
+| **Puntos de la mano + MLP v2 (incluido)** | **91,1 %** | **80,3 %** | ~8 MB |
 
-The first model scored 99% on its own dataset but failed on real webcams: its training data was a single signer
-in front of a gray background, so it learned the scene instead of the hand. Lesson: **always evaluate on data from different people.**
+El primer modelo llegaba al 99 % en su propio dataset, pero fallaba con webcams reales: sus datos eran de una sola persona
+frente a un fondo gris, así que aprendió la escena en lugar de la mano. Lección: **evaluar siempre con datos de otras personas.**
 
-Known limits of this pilot:
-- ASL alphabet only (not LSB — Bolivian Sign Language). The recognizer is a port, so an LSB model can replace it without touching the UI.
-- J and Z involve motion; a single-frame model cannot judge them, so Practice skips them.
-- Accuracy on real webcams is still far from perfect; good light and the whole hand in view help.
+La versión v2 se entrenó con más personas y con copias espejadas de cada muestra (por eso reconoce ambas manos).
+Las cifras de v2 se midieron con particiones reservadas antes del entrenamiento final, que luego usó todos los datos.
 
-## Credits and licenses
+Límites conocidos de este piloto:
+- Solo el alfabeto ASL (no LSB, Lengua de Señas Boliviana). El reconocedor es un puerto, así que un modelo LSB puede reemplazarlo sin tocar la interfaz.
+- La J y la Z requieren movimiento; un modelo de un solo cuadro no puede juzgarlas, por eso Practicar las omite.
+- La precisión con webcams reales todavía está lejos de ser perfecta; ayudan la buena luz y la mano completa a la vista.
 
-- Palm detection and hand landmark models: [OpenCV Zoo](https://huggingface.co/opencv) `palm_detection_mediapipe` and `handpose_estimation_mediapipe` (Apache-2.0), derived from Google MediaPipe.
-- Landmark classifier trained on [ASL-HG](https://huggingface.co/datasets/juanjodurillo/asl-hg) (CC-BY-4.0) and [EitanG98/asl_letters](https://huggingface.co/datasets/EitanG98/asl_letters) (Unlicense). Test fixtures are photos from `EitanG98/asl_letters`.
-- Sign drawings: Wikimedia Commons *Sign language A–Z* series (public domain).
+## Créditos y licencias
+
+- Modelos de detección de palma y de puntos de la mano: [OpenCV Zoo](https://huggingface.co/opencv) `palm_detection_mediapipe` y `handpose_estimation_mediapipe` (Apache-2.0), derivados de Google MediaPipe.
+- Clasificador de puntos de la mano entrenado con:
+  - [juanjodurillo/asl-hg](https://huggingface.co/datasets/juanjodurillo/asl-hg) (CC-BY-4.0)
+  - [EitanG98/asl_letters](https://huggingface.co/datasets/EitanG98/asl_letters) (Unlicense)
+  - [ronibandini/AmericanSignLanguage](https://huggingface.co/datasets/ronibandini/AmericanSignLanguage) (MIT)
+  - [aliciiavs/sign_language_image_dataset](https://huggingface.co/datasets/aliciiavs/sign_language_image_dataset), [Hemg/sign_language_dataset](https://huggingface.co/datasets/Hemg/sign_language_dataset) y [niki-stha/asl-detection-roboflow](https://huggingface.co/datasets/niki-stha/asl-detection-roboflow): **no declaran licencia**; se usaron solo con fines académicos. Para un uso comercial habría que reentrenar sin ellos (el modelo v1 no los usa).
+- Las fotos de prueba son de `EitanG98/asl_letters`.
+- Dibujos de las señas: serie *Sign language A–Z* de Wikimedia Commons (dominio público).

@@ -15,4 +15,6 @@ public partial class PracticePage : CameraPage
 	protected override CameraView Camera => CameraPreview;
 
 	protected override GraphicsView SkeletonView => Skeleton;
+
+	protected override GraphicsView OverlayView => Overlay;
 }

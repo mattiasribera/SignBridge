@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using SignBridge.Core.Recognition;
 using SignBridge.Services;
 
@@ -24,12 +25,27 @@ public abstract partial class RecognitionViewModel : ObservableObject, IRecognit
 	[ObservableProperty]
 	public partial bool HandVisible { get; set; }
 
+	/// <summary>Size of the frame the <see cref="Landmarks"/> refer to.</summary>
+	public Size FrameSize { get; private set; }
+
+	/// <summary>Draw the skeleton on top of the hand in the preview instead of in the corner thumbnail.</summary>
 	[ObservableProperty]
-	public partial string Status { get; set; } = "Starting camera…";
+	[NotifyPropertyChangedFor(nameof(ShowThumbnail), nameof(OverlayButtonText))]
+	public partial bool ShowOverlay { get; set; } = Preferences.Default.Get(OverlayPreference, false);
+
+	public bool ShowThumbnail => !ShowOverlay;
+
+	public string OverlayButtonText => ShowOverlay ? "✋ Esqueleto en miniatura" : "✋ Esqueleto sobre mi mano";
+
+	[ObservableProperty]
+	public partial string Status { get; set; } = "Iniciando la cámara…";
+
+	private const string OverlayPreference = "skeleton_overlay";
 
 	public void OnRecognized(RecognitionResult result)
 	{
 		HandVisible = result.HandFound;
+		FrameSize = new Size(result.FrameWidth, result.FrameHeight);
 		Landmarks = result.Landmarks;
 		DetectedLabel = result.HandFound ? result.Top.Label : "–";
 		DetectedConfidence = result.Top.Confidence;
@@ -38,6 +54,13 @@ public abstract partial class RecognitionViewModel : ObservableObject, IRecognit
 	}
 
 	public void OnStatus(string message) => Status = message;
+
+	[RelayCommand]
+	private void ToggleOverlay()
+	{
+		ShowOverlay = !ShowOverlay;
+		Preferences.Default.Set(OverlayPreference, ShowOverlay);
+	}
 
 	/// <summary>Image resource for a letter (public-domain ASL drawings from Wikimedia Commons).</summary>
 	public static string SignImage(string letter) => $"asl_{letter.ToLowerInvariant()}.png";
