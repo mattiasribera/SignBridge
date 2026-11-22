@@ -98,4 +98,20 @@ public class PracticeSessionTests
         Assert.Equal(1, session.BestStreak);
         Assert.NotEqual(target, session.Target);
     }
+
+    [Fact]
+    public void Every_letter_is_asked_once_before_any_letter_repeats()
+    {
+        var session = new PracticeSession(AslAlphabet.PracticeLetters, new Random(7));
+        var seen = new List<string>();
+
+        for (var i = 0; i < AslAlphabet.PracticeLetters.Count; i++)
+        {
+            seen.Add(session.Target);
+            session.Skip();
+        }
+
+        Assert.Equal(AslAlphabet.PracticeLetters.Order(), seen.Order());
+        Assert.NotEqual(seen[^1], session.Target);
+    }
 }

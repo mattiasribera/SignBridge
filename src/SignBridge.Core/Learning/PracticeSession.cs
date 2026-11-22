@@ -17,7 +17,8 @@ public enum PracticeOutcome
 /// <summary>
 /// Practice game: show a target letter, the learner signs it, and points are awarded when the
 /// recognizer sees it with enough confidence for <c>requiredHits</c> consecutive frames.
-/// Each consecutive match adds a streak bonus.
+/// Each consecutive match adds a streak bonus. Targets are dealt from a shuffled deck so every
+/// letter is practiced before any repeats.
 /// </summary>
 public sealed class PracticeSession
 {
@@ -28,6 +29,7 @@ public sealed class PracticeSession
     private readonly Random _random;
     private readonly float _threshold;
     private readonly int _requiredHits;
+    private readonly Queue<string> _deck = new();
     private int _hits;
 
     public PracticeSession(IReadOnlyList<string> letters, Random random, float confidenceThreshold = 0.6f, int requiredHits = 2)
@@ -41,7 +43,7 @@ public sealed class PracticeSession
         _random = random;
         _threshold = confidenceThreshold;
         _requiredHits = requiredHits;
-        Target = _letters[_random.Next(_letters.Count)];
+        Target = DrawFromDeck(previous: null);
     }
 
     public string Target { get; private set; }
@@ -91,11 +93,30 @@ public sealed class PracticeSession
     private void NextTarget()
     {
         _hits = 0;
-        var previous = Target;
-        do
+        Target = DrawFromDeck(Target);
+    }
+
+    /// <summary>
+    /// Deals letters like a shuffled deck: every letter comes up once before any repeats, and a
+    /// new deck never starts with the letter that was just asked.
+    /// </summary>
+    private string DrawFromDeck(string? previous)
+    {
+        if (_deck.Count == 0)
         {
-            Target = _letters[_random.Next(_letters.Count)];
+            var shuffled = _letters.ToArray();
+            _random.Shuffle(shuffled);
+            if (shuffled[0] == previous)
+            {
+                (shuffled[0], shuffled[^1]) = (shuffled[^1], shuffled[0]);
+            }
+
+            foreach (var letter in shuffled)
+            {
+                _deck.Enqueue(letter);
+            }
         }
-        while (Target == previous);
+
+        return _deck.Dequeue();
     }
 }

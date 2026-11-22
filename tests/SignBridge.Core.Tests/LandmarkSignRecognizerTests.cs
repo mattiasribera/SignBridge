@@ -1,6 +1,7 @@
 using System.Text.Json;
 using SignBridge.Core.Recognition;
 using SignBridge.Core.Recognition.Landmarks;
+using SkiaSharp;
 
 namespace SignBridge.Core.Tests;
 
@@ -93,6 +94,37 @@ public class LandmarkSignRecognizerTests
         Assert.True(meanError < handSize * 0.06, $"mean landmark error {meanError:F1}px vs hand size {handSize:F1}px");
     }
 
+    [Theory]
+    [InlineData("A")]
+    [InlineData("B")]
+    [InlineData("L")]
+    [InlineData("O")]
+    [InlineData("V")]
+    [InlineData("Y")]
+    public void Recognizes_the_same_sign_made_with_the_left_hand(string letter)
+    {
+        using var recognizer = CreateRecognizer();
+        using var leftHand = Mirrored(Fixture($"hand_{letter}.jpg"));
+
+        var result = recognizer.Recognize(leftHand);
+
+        Assert.True(result.HandFound);
+        Assert.Equal(letter, result.Top.Label);
+    }
+
+    [Fact]
+    public void Reports_the_frame_size_the_landmarks_refer_to()
+    {
+        using var recognizer = CreateRecognizer();
+        using var image = File.OpenRead(Fixture("hand_A.jpg"));
+        using var decoded = SKBitmap.Decode(Fixture("hand_A.jpg"));
+
+        var result = recognizer.Recognize(image);
+
+        Assert.Equal(decoded.Width, result.FrameWidth);
+        Assert.Equal(decoded.Height, result.FrameHeight);
+    }
+
     [Fact]
     public void Reports_no_hand_on_an_empty_scene()
     {
@@ -116,4 +148,20 @@ public class LandmarkSignRecognizerTests
         double[][]? Landmarks,
         double[]? Features,
         double[]? Probabilities);
+
+    private static MemoryStream Mirrored(string path)
+    {
+        using var source = SKBitmap.Decode(path);
+        using var mirrored = new SKBitmap(source.Width, source.Height);
+        using (var canvas = new SKCanvas(mirrored))
+        {
+            canvas.Scale(-1, 1, source.Width / 2f, 0);
+            canvas.DrawBitmap(source, 0, 0);
+        }
+
+        var stream = new MemoryStream();
+        mirrored.Encode(stream, SKEncodedImageFormat.Jpeg, 95);
+        stream.Position = 0;
+        return stream;
+    }
 }

@@ -12,7 +12,7 @@ namespace SignBridge.Core.Recognition;
 /// generalizes to new people far better than whole-image classifiers.
 /// </summary>
 /// <remarks>The whole frame is analyzed: the palm detector finds the hand, and the classifier was
-/// trained on left and right hands, so no cropping or mirroring is needed.</remarks>
+/// trained with mirrored copies of every sample, so left and right hands work without mirroring here.</remarks>
 public sealed class LandmarkSignRecognizer : ISignRecognizer
 {
     private readonly InferenceSession[] _sessions;
@@ -52,10 +52,15 @@ public sealed class LandmarkSignRecognizer : ISignRecognizer
             var landmarks = palm is null ? null : _hands.Detect(bitmap, palm);
             if (landmarks is null)
             {
-                return RecognitionResult.NoHand;
+                return RecognitionResult.NoHand with { FrameWidth = bitmap.Width, FrameHeight = bitmap.Height };
             }
 
-            return Classify(HandFeatures.FromLandmarks(landmarks)) with { Landmarks = landmarks };
+            return Classify(HandFeatures.FromLandmarks(landmarks)) with
+            {
+                Landmarks = landmarks,
+                FrameWidth = bitmap.Width,
+                FrameHeight = bitmap.Height,
+            };
         }
     }
 

@@ -15,6 +15,12 @@ public sealed record RecognitionResult(IReadOnlyList<SignPrediction> Ranked, flo
     public bool HandFound => Ranked.Count > 0;
 
     public SignPrediction Top => Ranked.Count > 0 ? Ranked[0] : Nothing;
+
+    /// <summary>Width in pixels of the analyzed frame (after EXIF rotation); <see cref="Landmarks"/> refer to it.</summary>
+    public int FrameWidth { get; init; }
+
+    /// <summary>Height in pixels of the analyzed frame (after EXIF rotation).</summary>
+    public int FrameHeight { get; init; }
 }
 
 /// <summary>
