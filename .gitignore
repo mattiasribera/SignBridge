@@ -485,7 +485,7 @@ $RECYCLE.BIN/
 __pycache__/
 .venv/
 
-# Local agent tooling
+# Local tooling
 .atl/
 
 # Internal task notes
