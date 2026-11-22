@@ -48,7 +48,12 @@
                 <VerticalStackLayout Spacing="4">
                     <Label FontSize="14" HorizontalOptions="Center" Text="Understood sign" TextColor="White" />
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
-                        <Border Padding="4" BackgroundColor="White" StrokeShape="RoundRectangle 10" StrokeThickness="0">
+                        <Border
+                            Padding="4"
+                            BackgroundColor="White"
+                            IsVisible="{Binding HandVisible}"
+                            StrokeShape="RoundRectangle 10"
+                            StrokeThickness="0">
                             <Image Aspect="AspectFit" HeightRequest="72" Source="{Binding DetectedImage}" WidthRequest="72" />
                         </Border>
                         <Label FontAttributes="Bold" FontSize="28" Text="{Binding DetectedLabel}" TextColor="White" />

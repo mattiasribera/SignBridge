@@ -60,7 +60,7 @@
                 <Label.FormattedText>
                     <FormattedString>
                         <Span FontAttributes="Bold" Text="How it works: " />
-                        <Span Text="an EfficientNet-B0 model from Hugging Face (abdollahhh/asl-sign-language-efficientnet-b0) runs on the device with ONNX Runtime. No internet needed, no image leaves the phone. Pilot scope: American Sign Language (ASL) static alphabet; the recognizer is pluggable to support LSB or full words later." />
+                        <Span Text="MediaPipe hand models (OpenCV Zoo, via Hugging Face) find 21 points of your hand, and a small neural network trained on many different people classifies the hand shape. Everything runs on the device with ONNX Runtime: no internet, no image leaves the phone. Pilot scope: American Sign Language (ASL) static alphabet; the recognizer is pluggable to support LSB or full words later." />
                     </FormattedString>
                 </Label.FormattedText>
             </Label>

@@ -68,7 +68,12 @@
                 VerticalOptions="End">
                 <HorizontalStackLayout Spacing="10">
                     <Label FontSize="16" Text="I see:" TextColor="White" VerticalOptions="Center" />
-                    <Border Padding="3" BackgroundColor="White" StrokeShape="RoundRectangle 8" StrokeThickness="0">
+                    <Border
+                        Padding="3"
+                        BackgroundColor="White"
+                        IsVisible="{Binding HandVisible}"
+                        StrokeShape="RoundRectangle 8"
+                        StrokeThickness="0">
                         <Image Aspect="AspectFit" HeightRequest="44" Source="{Binding DetectedImage}" WidthRequest="44" />
                     </Border>
                     <Label FontAttributes="Bold" FontSize="28" Text="{Binding DetectedLabel}" TextColor="White" />
