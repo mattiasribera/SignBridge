@@ -7,8 +7,6 @@ namespace SignBridge.Services;
 /// <summary>What a screen needs to consume live recognition results.</summary>
 public interface IRecognitionConsumer
 {
-	FrameOptions FrameOptions { get; }
-
 	void OnRecognized(RecognitionResult result);
 
 	void OnStatus(string message);
@@ -52,8 +50,7 @@ public sealed class RecognitionLoop
 				}
 
 				frame.Position = 0;
-				var options = consumer.FrameOptions;
-				var result = await Task.Run(() => recognizer.Recognize(frame, options), token);
+				var result = await Task.Run(() => recognizer.Recognize(frame), token);
 				consumer.OnRecognized(result);
 			}
 			catch (OperationCanceledException) when (token.IsCancellationRequested)

@@ -42,8 +42,19 @@
 		<PackageReference Include="CommunityToolkit.Maui" Version="16.0.0" />
 		<PackageReference Include="CommunityToolkit.Maui.Camera" Version="7.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-		<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.32.0" />
 		<PackageReference Include="SkiaSharp" Version="4.157.0" />
+	</ItemGroup>
+
+	<!--
+		ONNX Runtime ships Android binaries inside onnxruntime.aar. NuGet also maps the android-arm64
+		RID to the linux-arm64 glibc binaries, which would replace the Android ones in the APK and
+		crash at load time, so plain native assets are excluded on Android.
+	-->
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.32.0" ExcludeAssets="native" />
+	</ItemGroup>
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'android'">
+		<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.32.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -8,7 +8,7 @@ namespace SignBridge.ViewModels;
 
 public partial class TranslateViewModel(SpeechService speech) : RecognitionViewModel
 {
-	private readonly WordBuilder _builder = new(confidenceThreshold: 0.7f, stableFrames: 3);
+	private readonly WordBuilder _builder = new(confidenceThreshold: 0.6f, stableFrames: 3);
 
 	[ObservableProperty]
 	[NotifyCanExecuteChangedFor(nameof(SpeakCommand))]
@@ -20,16 +20,21 @@ public partial class TranslateViewModel(SpeechService speech) : RecognitionViewM
 	[ObservableProperty]
 	public partial double CandidateProgress { get; set; }
 
-	protected override void Handle(SignPrediction top)
+	protected override void Handle(RecognitionResult result)
 	{
+		var top = result.Top;
 		if (_builder.Push(top))
 		{
 			Vibrate();
 			Status = $"Added \"{top.Label}\". Lower your hand to repeat a letter.";
 		}
+		else if (!result.HandFound)
+		{
+			Status = "Show your hand to the camera";
+		}
 		else if (_builder.Candidate is null)
 		{
-			Status = "Hold a letter steady inside the frame";
+			Status = "Hold the letter steady";
 		}
 
 		Sync();

@@ -7,33 +7,42 @@ namespace SignBridge.ViewModels;
 /// <summary>Shared state for screens that show what the camera currently recognizes.</summary>
 public abstract partial class RecognitionViewModel : ObservableObject, IRecognitionConsumer
 {
-	/// <summary>Part of the shorter image side analyzed; matches the guide frame drawn on screen.</summary>
-	public const float GuideFraction = 0.8f;
-
 	[ObservableProperty]
 	public partial string DetectedLabel { get; set; } = "–";
 
 	[ObservableProperty]
 	public partial double DetectedConfidence { get; set; }
 
+	/// <summary>Reference picture of the sign the model thinks it sees, to compare with your hand.</summary>
+	[ObservableProperty]
+	public partial string? DetectedImage { get; set; }
+
+	/// <summary>21 hand points (x,y,z triplets) of the last frame, or null when no hand is visible.</summary>
+	[ObservableProperty]
+	public partial float[]? Landmarks { get; set; }
+
+	[ObservableProperty]
+	public partial bool HandVisible { get; set; }
+
 	[ObservableProperty]
 	public partial string Status { get; set; } = "Starting camera…";
 
-	[ObservableProperty]
-	public partial bool Mirror { get; set; }
-
-	public FrameOptions FrameOptions => new(GuideFraction, Mirror);
-
 	public void OnRecognized(RecognitionResult result)
 	{
-		DetectedLabel = result.Top.Label;
+		HandVisible = result.HandFound;
+		Landmarks = result.Landmarks;
+		DetectedLabel = result.HandFound ? result.Top.Label : "–";
 		DetectedConfidence = result.Top.Confidence;
-		Handle(result.Top);
+		DetectedImage = result.HandFound ? SignImage(result.Top.Label) : null;
+		Handle(result);
 	}
 
 	public void OnStatus(string message) => Status = message;
 
-	protected abstract void Handle(SignPrediction top);
+	/// <summary>Image resource for a letter (public-domain ASL drawings from Wikimedia Commons).</summary>
+	public static string SignImage(string letter) => $"asl_{letter.ToLowerInvariant()}.png";
+
+	protected abstract void Handle(RecognitionResult result);
 
 	protected static void Vibrate()
 	{

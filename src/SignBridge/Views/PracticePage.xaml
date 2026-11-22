@@ -37,20 +37,27 @@
             </Border>
         </Grid>
 
-        <!--  Camera with guide frame and live detection  -->
-        <Grid x:Name="CameraHost" Grid.Row="1">
+        <!--  Camera, hand skeleton and live detection  -->
+        <Grid Grid.Row="1">
             <Border StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="Black">
                 <toolkit:CameraView x:Name="CameraPreview" />
             </Border>
             <Border
-                x:Name="Guide"
-                HorizontalOptions="Center"
+                Margin="10"
+                Padding="4"
+                BackgroundColor="#99000000"
+                HeightRequest="130"
+                HorizontalOptions="End"
                 InputTransparent="True"
-                Stroke="White"
-                StrokeDashArray="6,4"
-                StrokeShape="RoundRectangle 16"
-                StrokeThickness="3"
-                VerticalOptions="Center" />
+                StrokeShape="RoundRectangle 14"
+                StrokeThickness="0"
+                VerticalOptions="Start"
+                WidthRequest="130">
+                <VerticalStackLayout>
+                    <Label FontSize="11" HorizontalOptions="Center" Text="What the AI sees" TextColor="White" />
+                    <GraphicsView x:Name="Skeleton" HeightRequest="108" WidthRequest="120" />
+                </VerticalStackLayout>
+            </Border>
             <Border
                 Margin="0,0,0,12"
                 Padding="16,8"
@@ -61,6 +68,9 @@
                 VerticalOptions="End">
                 <HorizontalStackLayout Spacing="10">
                     <Label FontSize="16" Text="I see:" TextColor="White" VerticalOptions="Center" />
+                    <Border Padding="3" BackgroundColor="White" StrokeShape="RoundRectangle 8" StrokeThickness="0">
+                        <Image Aspect="AspectFit" HeightRequest="44" Source="{Binding DetectedImage}" WidthRequest="44" />
+                    </Border>
                     <Label FontAttributes="Bold" FontSize="28" Text="{Binding DetectedLabel}" TextColor="White" />
                     <Label
                         FontSize="16"
@@ -84,15 +94,27 @@
                 </DataTrigger>
             </Border.Triggers>
             <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16" RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
-                <Label
+                <Border
                     Grid.RowSpan="2"
-                    FontAttributes="Bold"
-                    FontSize="72"
-                    Text="{Binding Target}"
-                    TextColor="{StaticResource Primary}"
-                    VerticalOptions="Center" />
+                    Padding="6"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 14"
+                    StrokeThickness="0">
+                    <Image
+                        Aspect="AspectFit"
+                        HeightRequest="120"
+                        Source="{Binding TargetImage}"
+                        WidthRequest="120" />
+                </Border>
                 <VerticalStackLayout Grid.Column="1" Spacing="2">
-                    <Label FontAttributes="Bold" FontSize="16" Text="Sign this letter" />
+                    <HorizontalStackLayout Spacing="10">
+                        <Label FontAttributes="Bold" FontSize="16" Text="Sign the letter" VerticalOptions="Center" />
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="36"
+                            Text="{Binding Target}"
+                            TextColor="{StaticResource Primary}" />
+                    </HorizontalStackLayout>
                     <Label FontSize="15" Text="{Binding Hint}" />
                 </VerticalStackLayout>
                 <ProgressBar
@@ -111,8 +133,6 @@
                     Grid.Column="1"
                     HorizontalOptions="End"
                     Spacing="8">
-                    <Label Text="Mirror" VerticalOptions="Center" />
-                    <Switch IsToggled="{Binding Mirror}" />
                     <Button Command="{Binding SkipCommand}" Text="Skip" />
                 </HorizontalStackLayout>
             </Grid>

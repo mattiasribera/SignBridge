@@ -14,7 +14,5 @@ public partial class TranslatePage : CameraPage
 
 	protected override CameraView Camera => CameraPreview;
 
-	protected override View GuideFrame => Guide;
-
-	protected override View CameraArea => CameraHost;
+	protected override GraphicsView SkeletonView => Skeleton;
 }

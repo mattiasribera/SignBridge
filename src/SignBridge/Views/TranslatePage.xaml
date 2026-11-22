@@ -15,20 +15,27 @@
 
     <Grid Padding="12" RowDefinitions="*,Auto" RowSpacing="12">
 
-        <!--  Camera with guide frame and the letter being held  -->
-        <Grid x:Name="CameraHost">
+        <!--  Camera, hand skeleton and the understood sign  -->
+        <Grid>
             <Border StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="Black">
                 <toolkit:CameraView x:Name="CameraPreview" />
             </Border>
             <Border
-                x:Name="Guide"
-                HorizontalOptions="Center"
+                Margin="10"
+                Padding="4"
+                BackgroundColor="#99000000"
+                HeightRequest="130"
+                HorizontalOptions="End"
                 InputTransparent="True"
-                Stroke="White"
-                StrokeDashArray="6,4"
-                StrokeShape="RoundRectangle 16"
-                StrokeThickness="3"
-                VerticalOptions="Center" />
+                StrokeShape="RoundRectangle 14"
+                StrokeThickness="0"
+                VerticalOptions="Start"
+                WidthRequest="130">
+                <VerticalStackLayout>
+                    <Label FontSize="11" HorizontalOptions="Center" Text="What the AI sees" TextColor="White" />
+                    <GraphicsView x:Name="Skeleton" HeightRequest="108" WidthRequest="120" />
+                </VerticalStackLayout>
+            </Border>
             <Border
                 Margin="0,0,0,12"
                 Padding="16,8"
@@ -37,9 +44,13 @@
                 StrokeShape="RoundRectangle 18"
                 StrokeThickness="0"
                 VerticalOptions="End"
-                WidthRequest="220">
+                WidthRequest="260">
                 <VerticalStackLayout Spacing="4">
+                    <Label FontSize="14" HorizontalOptions="Center" Text="Understood sign" TextColor="White" />
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+                        <Border Padding="4" BackgroundColor="White" StrokeShape="RoundRectangle 10" StrokeThickness="0">
+                            <Image Aspect="AspectFit" HeightRequest="72" Source="{Binding DetectedImage}" WidthRequest="72" />
+                        </Border>
                         <Label FontAttributes="Bold" FontSize="28" Text="{Binding DetectedLabel}" TextColor="White" />
                         <Label
                             FontSize="16"
@@ -83,8 +94,6 @@
                         <Button Command="{Binding ClearCommand}" Text="Clear" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Spacing="8">
-                        <Label Text="Mirror" VerticalOptions="Center" />
-                        <Switch IsToggled="{Binding Mirror}" />
                         <Button
                             BackgroundColor="{StaticResource Tertiary}"
                             Command="{Binding SpeakCommand}"

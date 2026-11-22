@@ -7,7 +7,7 @@ namespace SignBridge.ViewModels;
 
 public partial class PracticeViewModel : RecognitionViewModel
 {
-	private readonly PracticeSession _session = new(AslAlphabet.PracticeLetters, Random.Shared);
+	private readonly PracticeSession _session = new(AslAlphabet.PracticeLetters, Random.Shared, confidenceThreshold: 0.5f, requiredHits: 2);
 	private CancellationTokenSource? _celebration;
 
 	public PracticeViewModel() => SyncFromSession();
@@ -17,6 +17,9 @@ public partial class PracticeViewModel : RecognitionViewModel
 
 	[ObservableProperty]
 	public partial string Hint { get; set; } = string.Empty;
+
+	[ObservableProperty]
+	public partial string TargetImage { get; set; } = string.Empty;
 
 	[ObservableProperty]
 	public partial int Score { get; set; }
@@ -33,16 +36,17 @@ public partial class PracticeViewModel : RecognitionViewModel
 	[ObservableProperty]
 	public partial bool IsCelebrating { get; set; }
 
-	protected override void Handle(SignPrediction top)
+	protected override void Handle(RecognitionResult result)
 	{
 		var previousScore = _session.Score;
-		var outcome = _session.Submit(top);
+		var outcome = _session.Submit(result);
 
 		Status = outcome switch
 		{
 			PracticeOutcome.Matched => $"Correct! +{_session.Score - previousScore} points",
 			PracticeOutcome.InProgress => "Good, hold it…",
-			_ => $"Show the letter {_session.Target} inside the frame",
+			_ when !result.HandFound => "Show your hand to the camera",
+			_ => $"Not yet — compare your hand with the picture of {_session.Target}",
 		};
 
 		if (outcome == PracticeOutcome.Matched)
@@ -66,6 +70,7 @@ public partial class PracticeViewModel : RecognitionViewModel
 	{
 		Target = _session.Target;
 		Hint = AslAlphabet.HintFor(_session.Target);
+		TargetImage = SignImage(_session.Target);
 		Score = _session.Score;
 		Streak = _session.Streak;
 		BestStreak = _session.BestStreak;
